@@ -1,8 +1,22 @@
 
+
 import streamlit as st
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
+
+# sympy에 is_continuous 함수 동적 추가
+def is_continuous(expr, symbol, point):
+    from sympy import limit, S
+    left = limit(expr, symbol, point, dir='-')
+    right = limit(expr, symbol, point, dir='+')
+    value = expr.subs(symbol, point)
+    # 모두 정의되어 있고 값이 같으면 연속
+    try:
+        return left == right == value
+    except Exception:
+        return False
+sp.is_continuous = is_continuous
 
 st.title("함수 연속성 판별 및 그래프 그리기")
 st.markdown("""
