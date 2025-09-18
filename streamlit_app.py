@@ -1,49 +1,69 @@
+
 import streamlit as st
 
-st.title("🎈 My new app")
-st.header("Streamlit 요소 데모")
+st.title("함수 연속성 판별기")
+st.markdown("""
+함수를 입력하면, 해당 함수가 특정 구간에서 연속인지 판별합니다. (실수 함수, 기본적인 연속성 판별)
+예시: x**2, sin(x), 1/x 등
+""")
 
-# 텍스트 요소
-st.subheader("텍스트 요소")
-st.text("이것은 일반 텍스트입니다.")
-st.markdown("**마크다운**도 지원합니다!")
-st.code("print('Hello, Streamlit!')", language="python")
+import sympy as sp
 
-# 입력 요소
-st.subheader("입력 요소")
-name = st.text_input("이름을 입력하세요")
-age = st.number_input("나이", min_value=0, max_value=120, value=25)
-agree = st.checkbox("동의합니다")
+func_str = st.text_input("함수식을 입력하세요 (예: x**2, sin(x), 1/x)", value="x**2")
+interval = st.text_input("구간을 입력하세요 (예: -1,1)", value="-1,1")
 
-# 버튼
-st.subheader("버튼")
-if st.button("클릭!"):
-    st.success(f"{name}님, 버튼을 눌렀습니다!")
+if func_str:
+    x = sp.symbols('x')
+    try:
+        func = sp.sympify(func_str)
+        a, b = [float(s.strip()) for s in interval.split(",")]
+        # 구간 내 임의의 점에서 연속성 판별
+        points = [a, (a+b)/2, b]
+        results = []
+        for pt in points:
+            is_cont = sp.is_continuous(func, x, pt)
+            results.append((pt, is_cont))
+        st.write(f"함수: $f(x) = {sp.latex(func)}$")
+        st.write(f"구간: [{a}, {b}]")
+        for pt, res in results:
+            st.write(f"x = {pt} 에서 연속성: {'연속' if res else '불연속'}")
+        if all(res for _, res in results):
+            st.success("이 함수는 해당 구간 내에서 연속입니다.")
+        else:
+            st.error("이 함수는 해당 구간 내에서 불연속인 점이 있습니다.")
+    except Exception as e:
+        st.error(f"오류: {e}")
 
-# 슬라이더
-st.subheader("슬라이더")
-value = st.slider("값을 선택하세요", 0, 100, 50)
-st.write(f"선택한 값: {value}")
+# --- 함수 연속성 판별 페이지 ---
+st.header("함수 연속성 판별기")
+st.markdown("""
+함수를 입력하면, 해당 함수가 특정 구간에서 연속인지 판별합니다. (실수 함수, 기본적인 연속성 판별)
+예시: x**2, sin(x), 1/x 등
+""")
 
-# 선택박스
-st.subheader("선택박스")
-option = st.selectbox("좋아하는 색상은?", ["빨강", "파랑", "초록", "노랑"])
-st.write(f"선택한 색상: {option}")
+import sympy as sp
 
-# 차트
-st.subheader("차트 예시")
-import pandas as pd
-import numpy as np
-df = pd.DataFrame(
-    np.random.randn(20, 3),
-    columns=["a", "b", "c"]
-)
-st.line_chart(df)
+func_str = st.text_input("함수식을 입력하세요 (예: x**2, sin(x), 1/x)", value="x**2")
+interval = st.text_input("구간을 입력하세요 (예: -1,1)", value="-1,1")
 
-# 이미지
-st.subheader("이미지")
-st.image(
-    "https://static.streamlit.io/examples/dog.jpg",
-    caption="Streamlit 샘플 이미지",
-    use_column_width=True
-)
+if func_str:
+    x = sp.symbols('x')
+    try:
+        func = sp.sympify(func_str)
+        a, b = [float(s.strip()) for s in interval.split(",")]
+        # 구간 내 임의의 점에서 연속성 판별
+        points = [a, (a+b)/2, b]
+        results = []
+        for pt in points:
+            is_cont = sp.is_continuous(func, x, pt)
+            results.append((pt, is_cont))
+        st.write(f"함수: $f(x) = {sp.latex(func)}$")
+        st.write(f"구간: [{a}, {b}]")
+        for pt, res in results:
+            st.write(f"x = {pt} 에서 연속성: {'연속' if res else '불연속'}")
+        if all(res for _, res in results):
+            st.success("이 함수는 해당 구간 내에서 연속입니다.")
+        else:
+            st.error("이 함수는 해당 구간 내에서 불연속인 점이 있습니다.")
+    except Exception as e:
+        st.error(f"오류: {e}")
